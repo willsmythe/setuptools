@@ -79,11 +79,11 @@ jobs:
   - task: PublishTestResults@2
     inputs:
       testResultsFiles: '**/test-results.xml'
-      testRunTitle: 'Python $(python.version)'
+      testRunTitle: '$(Agent.JobName)'
     condition: succeededOrFailed()
   
   # - bash: |
-  #     export PIPELINES_JOB_NAME="${PYTHON}${PYTHON_VERSION}" CODECOV_ENV=PIPELINES_JOB_NAME
+  #     export CODECOV_ENV=$(Agent.JobName)
   #     tox -e coverage,codecov
   #   displayName: Publish coverage data
   #   condition: not(eq(variables.DISABLE_COVERAGE, '1'))
