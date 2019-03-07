@@ -5,11 +5,13 @@ trigger:
 
 variables:
   python: 'python'
+  pool_image: ubuntu-16.04
 
 jobs:
 - job: 'Test'
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: $[ variables.pool_image ]
+
   strategy:
     matrix:
       Python27:
@@ -26,6 +28,15 @@ jobs:
       PyPy3:
         python: 'pypy3'
         DISABLE_COVERAGE: 1
+      Python27Windows:
+        python.version: '2.7'
+        pool_image: vs2017-win2016
+      Python36Windows:
+        python.version: '3.6'
+        pool_image: vs2017-win2016
+      Python36Mac:
+        python.version: '3.6'
+        pool_image: macos-10.13
 
   steps:
   - task: UsePythonVersion@0
