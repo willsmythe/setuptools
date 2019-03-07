@@ -18,7 +18,6 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
-    maxParallel: 4
 
   steps:
   - task: UsePythonVersion@0
@@ -26,8 +25,19 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
 
-  - script: python -m pip install --upgrade pip && pip install -r requirements.txt
-    displayName: 'Install dependencies'
+  - script: |
+      python -m pip install --upgrade pip
+      pip install --upgrade setuptools wheel
+      pip install --upgrade tox tox-venv
+      pip freeze --all
+      env
+    displayName: 'Install prereqs'
+
+  - script: |
+      # update egg_info based on setup.py in checkout
+      python bootstrap.py
+      "! grep pyc setuptools.egg-info/SOURCES.txt"
+    displayName: Update egg_info
 
   - script: |
       pip install pytest
@@ -38,7 +48,7 @@ jobs:
     inputs:
       testResultsFiles: '**/test-results.xml'
       testRunTitle: 'Python $(python.version)'
-    condition: succeededOrFailed()
+    condition: false # disable for a moment; was succeededOrFailed()
 
 - job: 'Publish'
   dependsOn: 'Test'
