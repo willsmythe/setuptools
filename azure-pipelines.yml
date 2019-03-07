@@ -40,15 +40,14 @@ jobs:
     displayName: Update egg_info
 
   - script: |
-      pip install pytest
-      pytest tests --doctest-modules --junitxml=junit/test-results.xml
-    displayName: 'pytest'
+      tox --cov --junitxml=junit/test-results.xml
+    displayName: 'Tox'
 
   - task: PublishTestResults@2
     inputs:
       testResultsFiles: '**/test-results.xml'
       testRunTitle: 'Python $(python.version)'
-    condition: false # disable for a moment; was succeededOrFailed()
+    condition: succeededOrFailed()
 
 - job: 'Publish'
   dependsOn: 'Test'
