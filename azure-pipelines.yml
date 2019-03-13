@@ -67,14 +67,17 @@ jobs:
       ! grep pyc setuptools.egg-info/SOURCES.txt
     displayName: Update egg_info
 
-  - bash: |
+  - script: |
       export NETWORK_REQUIRED=1
-      if [ -z "$DISABLE_COVERAGE" ]; then
-        $PYTHON -m tox -- --cov --junitxml=junit/test-results.xml
-      else
-        $PYTHON -m tox -- --junitxml=junit/test-results.xml
-      fi
-    displayName: 'Tox'
+      $(python) -m tox -- --cov --junitxml=junit/test-results.xml
+    displayName: 'Tox with coverage'
+    condition: not(eq(variables.DISABLE_COVERAGE, '1'))
+
+  - script: |
+      export NETWORK_REQUIRED=1
+      $(python) -m tox -- --junitxml=junit/test-results.xml
+    displayName: 'Tox without coverage'
+    condition: eq(variables.DISABLE_COVERAGE, '1')
 
   - task: PublishTestResults@2
     inputs:
