@@ -2,12 +2,12 @@
 
 trigger:
 - master
-- azure-pipelines
 
 variables:
   python: 'python'
   pool_image: ubuntu-16.04
-  VSTS_OVERWRITE_TEMP: True
+  # Workaround for tests that assume the virtual env and the script to run are on the same drive (on Windows)
+  VSTS_OVERWRITE_TEMP: True  
 
 jobs:
 - job: 'Test'
@@ -76,7 +76,6 @@ jobs:
   - bash: |
       export NETWORK_REQUIRED=1
       $(python) -m tox -- --cov --junitxml=junit/test-results.xml
-      echo Error level: $?
     displayName: 'Tox with coverage'
     condition: not(eq(variables.DISABLE_COVERAGE, '1'))
 
