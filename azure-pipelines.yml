@@ -2,10 +2,12 @@
 
 trigger:
 - master
+- azure-pipelines
 
 variables:
   python: 'python'
   pool_image: ubuntu-16.04
+  VSTS_OVERWRITE_TEMP: True
 
 jobs:
 - job: 'Test'
@@ -45,6 +47,10 @@ jobs:
       architecture: 'x64'
     condition: notIn(variables.python, 'pypy', 'pypy3')
 
+  - script: choco install vcpython27 --no-progress
+    condition: and(eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['python.version'], '2.7'))
+    displayName: 'Install C++ compiler for Python 2.7'
+  
   # required until the UsePythonVersion task supports pypy
   - bash: |
       PYPYDIR=$(dirname $(dirname $(readlink -f $(which $PYTHON))))
